@@ -78,8 +78,8 @@ app.use(function (req, res, next) {
 
 
 app.use('/', routes);
-// app.use('/users', users);
-app.use('/', users);
+app.use('/users', users);
+// app.use('/', users);
 
 // Set Port
 app.set('port', (process.env.PORT || 3000));
