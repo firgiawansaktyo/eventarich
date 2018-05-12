@@ -41,6 +41,10 @@ router.post('/register', function (req, res) {
 		res.render('register', {
 			errors: errors
 		});
+		res.status(400).json({
+			message : 'Fail'
+		});
+
 	}
 	else {
 		//checking for email and username are already taken
@@ -68,43 +72,21 @@ router.post('/register', function (req, res) {
 					User.createUser(newUser, function (err, user) {
 						if (err) throw err;
 						console.log(user);
+						//res.send(user);
+						res.status(200).json({
+							message : 'Success'
+						});
 					});
-         	req.flash('success_msg', 'You are registered and can now login');
-					res.redirect('/users/login');
+         			//req.flash('success_msg', 'You are registered and can now login');
+					//res.redirect('/users/login');
+
 				}
 			});
 		});
 	}
 });
 
-passport.use(new LocalStrategy(
-	function (username, password, done) {
-		User.getUserByUsername(username, function (err, user) {
-			if (err) throw err;
-			if (!user) {
-				return done(null, false, { message: 'Unknown User' });
-			}
 
-			User.comparePassword(password, user.password, function (err, isMatch) {
-				if (err) throw err;
-				if (isMatch) {
-					return done(null, user);
-				} else {
-					return done(null, false, { message: 'Invalid password' });
-				}
-			});
-		});
-	}));
-
-passport.serializeUser(function (user, done) {
-	done(null, user.id);
-});
-
-passport.deserializeUser(function (id, done) {
-	User.getUserById(id, function (err, user) {
-		done(err, user);
-	});
-});
 
 router.post('/login',
 	passport.authenticate('local', { successRedirect: '/', failureRedirect: '/users/login', failureFlash: true }),
